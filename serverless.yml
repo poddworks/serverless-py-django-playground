@@ -1,0 +1,52 @@
+service: django-test # NOTE: update this with your service name
+
+package:
+  exclude:
+    - node_modules/**
+    - package-lock.json
+    - pakcage.json
+    - Dockerfile*
+
+plugins:
+  - serverless-python-requirements
+  - serverless-wsgi
+
+custom:
+  wsgi:
+    app: sampledjango.wsgi.application
+    packRequirements: false
+  pythonRequirements:
+    dockerizePip: true
+    dockerImage: 'serverless-py-mysql:v1'
+
+provider:
+  name: aws
+  runtime: python3.6
+  stage: ${opt:stage, 'debug'}
+  region: ap-northeast-1
+  deploymentBucket:
+    name: devops.poddworks.io
+    tags:
+      version: 0.0.0-debug
+  environment:
+    API_GATEWAY_BASE_PATH: ${self:provider.stage}
+    DATABASE_URI: '${ssm:/${self:provider.stage}/v1/database/uri~true}'
+    DATABASE_USER: '${ssm:/${self:provider.stage}/v1/database/user~true}'
+    DATABASE_PASSWD: '${ssm:/${self:provider.stage}/v1/database/passwd~true}'
+    DATABASE_DB_NAME: '${ssm:/${self:provider.stage}/v1/database/db-name~true}'
+  vpc:
+    securityGroupIds:
+      "Fn::Split":
+        - ","
+        - ${ssm:/infra/vpc/v1/security-group-ids}
+    subnetIds:
+      "Fn::Split":
+        - ","
+        - ${ssm:/infra/vpc/v1/subnet-ids}
+
+functions:
+  wsgi:
+    handler: wsgi_handler.handler
+    events:
+      - http: ANY /
+      - http: 'ANY {proxy+}'
