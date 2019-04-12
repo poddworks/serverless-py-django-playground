@@ -6,6 +6,7 @@ package:
     - package-lock.json
     - pakcage.json
     - Dockerfile*
+    - .vscode/**
 
 plugins:
   - serverless-python-requirements
@@ -46,8 +47,14 @@ provider:
 
 functions:
   wsgi:
+    name: ${self:provider.stage}-${self:service}-wsgi
     handler: wsgi_handler.handler
     role: ${ssm:/infra/lambda/v1/serverless/role-for-vpc-exec}
     events:
       - http: ANY /
       - http: 'ANY {proxy+}'
+
+  dbutil:
+    name: ${self:provider.stage}-${self:service}-sql
+    handler: database_util.handler
+    role: ${ssm:/infra/lambda/v1/serverless/role-for-vpc-exec}
