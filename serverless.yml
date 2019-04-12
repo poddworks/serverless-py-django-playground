@@ -25,12 +25,12 @@ provider:
   stage: ${opt:stage, 'debug'}
   region: ap-northeast-1
   deploymentBucket:
-    name: devops.poddworks.io
+    name: ${ssm:/infra/lambda/v1/serverless/bucket-name}
     tags:
       version: 0.0.0-debug
   environment:
     API_GATEWAY_BASE_PATH: ${self:provider.stage}
-    DATABASE_URI: '${ssm:/${self:provider.stage}/v1/database/uri~true}'
+    DATABASE_URI: '${ssm:/${self:provider.stage}/v1/database/uri}'
     DATABASE_USER: '${ssm:/${self:provider.stage}/v1/database/user~true}'
     DATABASE_PASSWD: '${ssm:/${self:provider.stage}/v1/database/passwd~true}'
     DATABASE_DB_NAME: '${ssm:/${self:provider.stage}/v1/database/db-name~true}'
@@ -47,6 +47,7 @@ provider:
 functions:
   wsgi:
     handler: wsgi_handler.handler
+    role: ${ssm:/infra/lambda/v1/serverless/role-for-vpc-exec}
     events:
       - http: ANY /
       - http: 'ANY {proxy+}'
