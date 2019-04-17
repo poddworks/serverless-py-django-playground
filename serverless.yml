@@ -6,6 +6,7 @@ package:
     - package-lock.json
     - pakcage.json
     - Dockerfile*
+    - db.*
     - .vscode/**
 
 plugins:
@@ -35,6 +36,11 @@ provider:
     DATABASE_USER: '${ssm:/${self:provider.stage}/v1/database/user~true}'
     DATABASE_PASSWD: '${ssm:/${self:provider.stage}/v1/database/passwd~true}'
     DATABASE_DB_NAME: '${ssm:/${self:provider.stage}/v1/database/db-name~true}'
+    DEPLOY_STATUS: 'development-aws'
+    AWS_STORAGE_BUCKET_NAME: 'debug.ddt.org'
+    AWS_STORAGE_BUCKET_REGION: 'ap-southeast-1'
+    AWS_STORAGE_CUSTOM_DOMAIN: 'd2cel4f9p77os.cloudfront.net'
+    AWS_STORAGE_BUCKET_KEY_PREFIX: 'jeffrey-jen'
   vpc:
     securityGroupIds:
       "Fn::Split":
