@@ -1,7 +1,11 @@
 import datetime
 
+from urllib.parse import urlparse
+
 from django.db import models
 from django.utils import timezone
+
+from s3direct.fields import S3DirectField
 
 
 def make_filename(inst, filename):
@@ -10,6 +14,7 @@ def make_filename(inst, filename):
 class Question(models.Model):
     question_text = models.CharField(max_length=200)
     question_icon = models.FileField(max_length=200, default='null.ico', upload_to=make_filename)
+    question_thumb = S3DirectField(dest='dest', default='null.png')
     pub_date = models.DateTimeField('date published')
 
     def __str__(self):

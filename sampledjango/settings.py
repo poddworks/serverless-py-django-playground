@@ -32,6 +32,7 @@ ALLOWED_HOSTS = [ '*' ]
 
 INSTALLED_APPS = [
     'polls.apps.PollsConfig',
+    "s3direct",
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -151,6 +152,14 @@ AWS_DEFAULT_ACL = None
 # Object level setting
 AWS_LOCATION = os.environ.get('AWS_STORAGE_BUCKET_KEY_PREFIX', '')
 AWS_S3_FILE_OVERWRITE = True
+
+
+# Direct Upload to Cloud Storage Settings
+S3DIRECT_DESTINATIONS = {
+    'dest': {
+        'key': AWS_LOCATION
+    }
+}
 
 
 # Static files (CSS, JavaScript, Images)
