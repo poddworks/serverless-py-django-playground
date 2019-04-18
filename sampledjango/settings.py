@@ -25,7 +25,7 @@ SECRET_KEY = '5&8b*y@u7l8rmw4!h_e6j^%&1z%ztkb17)9!s#dy@5!h#r5(=j'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [ '*' ]
 
 
 # Application definition
@@ -141,8 +141,7 @@ AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
 AWS_S3_REGION_NAME = os.environ.get('AWS_STORAGE_BUCKET_REGION', 'us-east-1')
 AWS_S3_ENDPOINT_URL = None
 AWS_S3_ENCRYPTION = False
-AWS_S3_CUSTOM_DOMAIN = os.environ.get(
-    'AWS_STORAGE_CUSTOM_DOMAIN', 'debug.ddt.org')
+AWS_S3_CUSTOM_DOMAIN = os.environ.get('AWS_STORAGE_CUSTOM_DOMAIN', 'debug.ddt.org')
 
 # Disable Access Control List and NOT create Bucket, use IAM policy
 AWS_AUTO_CREATE_BUCKET = False
