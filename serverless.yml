@@ -32,16 +32,16 @@ provider:
     tags:
       version: 0.0.0-debug
   environment:
+    DEPLOY_STATUS: 'development-aws'
     API_GATEWAY_BASE_PATH: ${self:provider.stage}
     DATABASE_URI: '${ssm:/${self:provider.stage}/v1/database/uri}'
     DATABASE_USER: '${ssm:/${self:provider.stage}/v1/database/user~true}'
     DATABASE_PASSWD: '${ssm:/${self:provider.stage}/v1/database/passwd~true}'
     DATABASE_DB_NAME: '${ssm:/${self:provider.stage}/v1/database/db-name~true}'
-    DEPLOY_STATUS: 'development-aws'
-    AWS_STORAGE_BUCKET_NAME: 'debug.ddt.org'
-    AWS_STORAGE_BUCKET_REGION: 'ap-southeast-1'
-    AWS_STORAGE_CUSTOM_DOMAIN: 'd2cel4f9p77os.cloudfront.net'
-    AWS_STORAGE_BUCKET_KEY_PREFIX: 'jeffrey-jen'
+    AWS_STORAGE_BUCKET_NAME: '${ssm:/${self:provider.stage}/v1/storage/bucket-name}'
+    AWS_STORAGE_BUCKET_REGION: '${ssm:/${self:provider.stage}/v1/storage/bucket-region}'
+    AWS_STORAGE_CUSTOM_DOMAIN: '${ssm:/${self:provider.stage}/v1/cdn/endpoint}'
+    AWS_STORAGE_BUCKET_KEY_PREFIX: '${ssm:/${self:provider.stage}/v1/storage/object-prefix}'
   vpc:
     securityGroupIds:
       "Fn::Split":
