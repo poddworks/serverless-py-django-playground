@@ -25,12 +25,15 @@ SECRET_KEY = '5&8b*y@u7l8rmw4!h_e6j^%&1z%ztkb17)9!s#dy@5!h#r5(=j'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [ '*' ]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'polls.apps.PollsConfig',
+    "s3direct",
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -72,17 +75,24 @@ WSGI_APPLICATION = 'sampledjango.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ.get('DATABASE_DB_NAME'),
-        'USER': os.environ.get('DATABASE_USER'),
-        'PASSWORD': os.environ.get('DATABASE_PASSWD'),
-        'HOST': os.environ.get('DATABASE_URI'),
-        'PORT': 5432
+if os.environ.get('DEPLOY_STATUS', 'development') == 'development':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': os.environ.get('DATABASE_DB_NAME'),
+            'USER': os.environ.get('DATABASE_USER'),
+            'PASSWORD': os.environ.get('DATABASE_PASSWD'),
+            'HOST': os.environ.get('DATABASE_URI'),
+            'PORT': os.environ.get('DATABASE_URI_PORT', 5432)
+        }
+    }
 
 
 # Password validation
@@ -118,13 +128,42 @@ USE_L10N = True
 USE_TZ = True
 
 
+# Cloud Storage Configuration Settings
+# https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html
+
+# To upload your media files to S3 set:
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+# To allow django-admin.py collectstatic to automatically put your static files in your bucket
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+# Setup AWS S3 Storage Bucket
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_REGION_NAME = os.environ.get('AWS_STORAGE_BUCKET_REGION', 'us-east-1')
+AWS_S3_ENDPOINT_URL = None
+AWS_S3_ENCRYPTION = False
+AWS_S3_CUSTOM_DOMAIN = os.environ.get('AWS_STORAGE_CUSTOM_DOMAIN', 'debug.ddt.org')
+
+# Disable Access Control List and NOT create Bucket, use IAM policy
+AWS_AUTO_CREATE_BUCKET = False
+AWS_BUCKET_ACL = None
+AWS_DEFAULT_ACL = None
+
+# Object level setting
+AWS_LOCATION = os.environ.get('AWS_STORAGE_BUCKET_KEY_PREFIX', '')
+AWS_S3_FILE_OVERWRITE = True
+
+
+# Direct Upload to Cloud Storage Settings
+S3DIRECT_DESTINATIONS = {
+    'dest': {
+        'key': AWS_LOCATION
+    }
+}
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
-STATIC_URL = '/debug/static/'
-
-STATIC_ROOT = 'static'
-
-STATICFILES_DIRS = [
-    '/var/task/static'
-]
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_URL = '/static/'

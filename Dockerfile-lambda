@@ -6,8 +6,11 @@ RUN yum -y install python36 python36-pip
 
 # Install your dependencies
 RUN curl -s https://bootstrap.pypa.io/get-pip.py | python3
-RUN yum -y install python36-devel mysql-devel postgresql-contrib gcc
+RUN yum -y install python36-devel mysql-devel postgresql-contrib gcc git
 
 # Set the same WORKDIR as default image
 RUN mkdir /var/task
 WORKDIR /var/task
+
+# Adjust LANG, LANGUAGE, and LC_ALL
+ENV LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
