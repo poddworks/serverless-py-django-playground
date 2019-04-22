@@ -12,9 +12,16 @@ package:
 
 plugins:
   - serverless-python-requirements
+  - serverless-plugin-warmup
   - serverless-wsgi
 
 custom:
+  warmup:
+    role: '${ssm:/infra/lambda/v1/serverless/role-for-vpc-exec}'
+    vpc: false
+    prewarm: true
+    events:
+      - schedule: 'rate(5 minutes)'
   wsgi:
     app: sampledjango.wsgi.application
     packRequirements: false
@@ -60,3 +67,6 @@ functions:
     events:
       - http: ANY /
       - http: 'ANY {proxy+}'
+    warmup:
+      enabled: true
+      concurrency: 1
