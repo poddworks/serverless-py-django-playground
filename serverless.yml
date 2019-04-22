@@ -60,8 +60,3 @@ functions:
     events:
       - http: ANY /
       - http: 'ANY {proxy+}'
-
-  dbutil:
-    name: ${self:provider.stage}-${self:service}-sql
-    handler: database_util.handler
-    role: ${ssm:/infra/lambda/v1/serverless/role-for-vpc-exec}
