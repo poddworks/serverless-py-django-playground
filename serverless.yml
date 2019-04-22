@@ -9,6 +9,7 @@ package:
     - db.*
     - src/**
     - .vscode/**
+    - __pycache__/**
 
 plugins:
   - serverless-python-requirements
